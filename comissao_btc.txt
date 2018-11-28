@@ -1,0 +1,41 @@
+select ff.cod_cli,
+       to_char(ff.data_mvto,'dd/mm/yyyy') as data_mvto,
+      case when ff.ind_posi = 'T' then 'Tomador' else 'Doador' end as Tipo,
+       ff.num_cotr,
+       ff.num_parc,
+       to_char(ff.data_liqd,'dd/mm/yyyy') as data_liquidacao,
+       ff.qtde_acoe_liqd,
+       ff.cod_neg,
+       sum(ff.val_comi) as comissao
+  from corrwin.tbtliquidacao ff
+ where ff.data_mvto >= to_date('01/11/2018', 'dd/mm/yy')
+   and ff.data_mvto <= to_date('30/11/2018', 'dd/mm/yy')  
+ group by ff.cod_cli,
+          ff.data_mvto,
+          ff.ind_posi,
+          ff.num_cotr,
+          ff.num_parc,
+          ff.data_liqd,
+          ff.qtde_acoe_liqd,
+          ff.cod_neg
+union all
+select gg.cod_cli,
+       to_char(gg.data_mvto,'dd/mm/yyyy') as data_mvto,
+       case when gg.ind_posi = 'T' then 'Tomador' else 'Doador' end as Tipo,
+       gg.num_cotr,
+       gg.num_parc,
+       to_char(gg.data_liqd,'dd/mm/yyyy') as data_liquidacao,
+       gg.qtde_acoe_liqd,
+       gg.cod_neg,
+       sum(gg.val_comi) as comissao
+  from corrwin.hbtliquidacao gg
+ where gg.data_mvto >= to_date('01/11/2018', 'dd/mm/yy')
+   and gg.data_mvto <= to_date('30/11/2018', 'dd/mm/yy')   
+ group by gg.cod_cli,
+          gg.data_mvto,
+          gg.ind_posi,
+          gg.num_cotr,
+          gg.num_parc,
+          gg.data_liqd,
+          gg.qtde_acoe_liqd,
+          gg.cod_neg;
